@@ -35,6 +35,13 @@ export default function Home() {
     view.kind !== "loading" &&
     (!turnstileNeeded || Boolean(turnstileToken));
 
+  function handleJobTitleChange(value: string) {
+    setJobTitle(value);
+    if (view.kind === "error") {
+      setView({ kind: "idle" });
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!canSubmit) return;
@@ -81,7 +88,7 @@ export default function Home() {
         {view.kind !== "results" ? (
           <LandingView
             jobTitle={jobTitle}
-            onJobTitleChange={setJobTitle}
+            onJobTitleChange={handleJobTitleChange}
             onSubmit={handleSubmit}
             canSubmit={canSubmit}
             isLoading={view.kind === "loading"}
@@ -237,14 +244,11 @@ function LandingView({
           </div>
         ) : null}
 
-        {error ? (
-          <p
-            role="alert"
-            className="mt-4 text-sm text-[color:var(--error)]"
-          >
-            {error}
-          </p>
-        ) : null}
+        <div role="alert" aria-live="polite" className="min-h-[1.25rem]">
+          {error ? (
+            <p className="mt-4 text-sm text-[color:var(--error)]">{error}</p>
+          ) : null}
+        </div>
       </form>
 
       {isLoading ? (
