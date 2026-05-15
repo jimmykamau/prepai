@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+:root {
+  --surface: #f7f9fb;
+  --card: #ffffff;
+  --primary: #0f172a;
+  --muted: #45464d;
+  --accent: #4f46e5;
+  --accent-hover: #4338ca;
+  --accent-soft: #eef2ff;
+  --accent-soft-fg: #3730a3;
+  --success: #10b981;
+  --success-soft: #d1fae5;
+  --success-soft-fg: #047857;
+  --outline: #e2e8f0;
+  --outline-strong: #cbd5e1;
+  --error: #ba1a1a;
+  --shadow-card: 0 4px 12px rgba(15, 23, 42, 0.03);
+  --shadow-card-hover: 0 12px 32px rgba(15, 23, 42, 0.08);
+}
+
+@theme inline {
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-primary: var(--primary);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-soft-fg: var(--accent-soft-fg);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-success-soft-fg: var(--success-soft-fg);
+  --color-outline: var(--outline);
+  --color-outline-strong: var(--outline-strong);
+  --color-error: var(--error);
+  --font-display: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+html,
+body {
+  background: var(--surface);
+  color: var(--primary);
+}
+
+body {
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-display {
+  font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+.ai-card {
+  position: relative;
+  background: var(--card);
+  border: 1px solid var(--outline);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-card);
+  transition:
+    box-shadow 200ms ease-in-out,
+    border-color 200ms ease-in-out;
+}
+
+.ai-card:hover {
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--outline-strong);
+}
+
+.ai-card[data-ai="true"]::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--success) 100%);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.focus-ring:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.18);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.chip-behavioral  { background: #eef2ff; color: #3730a3; }
+.chip-situational { background: #fef3c7; color: #92400e; }
+.chip-technical   { background: #e0f2fe; color: #0369a1; }
+.chip-strategic   { background: #d1fae5; color: #047857; }
+.chip-cultural    { background: #f3e8ff; color: #6b21a8; }
