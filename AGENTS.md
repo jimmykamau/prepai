@@ -16,7 +16,7 @@ See `PROJECT_CONTEXT.md` for the product brief, the Stitch design source, and th
 
 | Task | Command |
 |-|-|
-| Dev server (Turbopack) | `npm run dev` |
+| Dev server | `npm run dev` |
 | Production build | `npm run build` |
 | Production start | `npm run start` |
 | Lint | `npm run lint` |
@@ -24,7 +24,7 @@ See `PROJECT_CONTEXT.md` for the product brief, the Stitch design source, and th
 
 No test runner is configured yet.
 
-CI runs `npm run lint` then `npm run build` on every push and on PRs to `main` (see `.github/workflows/ci.yml`). Node 24, npm caching.
+CI runs `npm run lint` then `npm run build` on pushes to `main` and on PRs targeting `main` (see `.github/workflows/ci.yml`). Node 24, npm caching.
 
 ## Architecture
 

@@ -38,4 +38,11 @@ vercel env add OPENROUTER_API_KEY production
 vercel --prod
 ```
 
+> **Abuse warning.** The MVP has no built-in rate limiting. If you deploy
+> publicly without Cloudflare Turnstile (`NEXT_PUBLIC_TURNSTILE_SITE_KEY` +
+> `TURNSTILE_SECRET_KEY`), anyone who finds the URL can drive arbitrary
+> spend against your configured LLM provider key by hitting `/api/questions`
+> repeatedly. Always enable Turnstile in production, or front the deployment
+> with an external WAF / per-IP limiter.
+
 See `AGENTS.md` for architecture and `PROJECT_CONTEXT.md` for product context and design-system source.
