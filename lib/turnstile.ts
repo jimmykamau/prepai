@@ -18,10 +18,6 @@ if (FATAL_MISMATCH) {
   );
 }
 
-export function turnstileEnabled(): boolean {
-  return HAS_SECRET;
-}
-
 export async function verifyTurnstile(
   token: string | undefined,
   remoteIp?: string,

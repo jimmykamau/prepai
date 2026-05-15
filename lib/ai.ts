@@ -31,26 +31,38 @@ function resolveProvider(): Provider {
   );
 }
 
-function buildModel(provider: Provider): LanguageModel {
-  if (provider === "google") {
-    const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
-    if (!apiKey) {
-      throw new ConfigurationError(
-        "GOOGLE_GENERATIVE_AI_API_KEY is not set (required when AI_PROVIDER=google)",
-      );
-    }
-    const google = createGoogleGenerativeAI({ apiKey });
-    const modelId = process.env.GOOGLE_MODEL?.trim() || DEFAULT_MODELS.google;
-    return google(modelId);
-  }
+let openrouterClient: ReturnType<typeof createOpenRouter> | null = null;
+let googleClient: ReturnType<typeof createGoogleGenerativeAI> | null = null;
 
+function getOpenRouter() {
+  if (openrouterClient) return openrouterClient;
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) {
     throw new ConfigurationError("OPENROUTER_API_KEY is not set");
   }
-  const openrouter = createOpenRouter({ apiKey });
+  openrouterClient = createOpenRouter({ apiKey });
+  return openrouterClient;
+}
+
+function getGoogle() {
+  if (googleClient) return googleClient;
+  const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+  if (!apiKey) {
+    throw new ConfigurationError(
+      "GOOGLE_GENERATIVE_AI_API_KEY is not set (required when AI_PROVIDER=google)",
+    );
+  }
+  googleClient = createGoogleGenerativeAI({ apiKey });
+  return googleClient;
+}
+
+function buildModel(provider: Provider): LanguageModel {
+  if (provider === "google") {
+    const modelId = process.env.GOOGLE_MODEL?.trim() || DEFAULT_MODELS.google;
+    return getGoogle()(modelId);
+  }
   const modelId = process.env.OPENROUTER_MODEL?.trim() || DEFAULT_MODELS.openrouter;
-  return openrouter(modelId);
+  return getOpenRouter()(modelId);
 }
 
 export async function generateInterviewQuestions(
