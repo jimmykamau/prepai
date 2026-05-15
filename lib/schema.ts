@@ -9,9 +9,9 @@ export const QuestionCategory = z.enum([
 ]);
 
 export const QuestionSchema = z.object({
-  question: z.string().min(15).max(400),
+  question: z.string().min(1).max(500),
   category: QuestionCategory,
-  rationale: z.string().min(20).max(280),
+  rationale: z.string().min(1).max(500),
 });
 
 export const QuestionsSchema = z.object({
