@@ -84,7 +84,11 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <main className="flex-1 w-full max-w-[1280px] mx-auto px-6 sm:px-10 py-12 sm:py-16">
+      <main
+        className={`flex-1 w-full max-w-[1280px] mx-auto px-6 sm:px-10 py-12 sm:py-16 ${
+          view.kind !== "results" ? "flex items-center justify-center" : ""
+        }`}
+      >
         {view.kind !== "results" ? (
           <LandingView
             jobTitle={jobTitle}
@@ -198,42 +202,41 @@ function LandingView({
 
       <form
         onSubmit={onSubmit}
-        className="mt-10 w-full ai-card p-6 sm:p-8 text-left"
+        className="mt-10 w-full max-w-xl flex flex-col gap-4 text-left"
       >
-        <label htmlFor="job-title" className="font-display text-sm font-medium text-primary">
-          Job title
-        </label>
-        <div className="mt-3 flex flex-col sm:flex-row gap-3">
-          <input
-            id="job-title"
-            name="jobTitle"
-            type="text"
-            value={jobTitle}
-            onChange={(e) => onJobTitleChange(e.target.value)}
-            placeholder={EXAMPLE_TITLE}
-            autoComplete="off"
-            autoFocus
-            maxLength={120}
-            disabled={isLoading}
-            className="focus-ring flex-1 h-12 px-4 rounded-lg border border-outline bg-card text-primary placeholder:text-muted/70 text-base transition-colors disabled:opacity-60"
-          />
-          <button
-            type="submit"
-            disabled={!canSubmit}
-            className="inline-flex items-center justify-center h-12 px-6 rounded-lg bg-accent text-white font-medium text-sm transition-colors hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isLoading ? (
-              <span className="inline-flex items-center gap-2">
-                <Spinner /> Generating…
-              </span>
-            ) : (
-              "Generate questions"
-            )}
-          </button>
-        </div>
+        <input
+          id="job-title"
+          name="jobTitle"
+          type="text"
+          value={jobTitle}
+          onChange={(e) => onJobTitleChange(e.target.value)}
+          placeholder={`Enter a job title (e.g. ${EXAMPLE_TITLE})`}
+          aria-label="Job title"
+          autoComplete="off"
+          autoFocus
+          maxLength={120}
+          disabled={isLoading}
+          className="focus-ring w-full h-12 px-4 rounded-lg border border-outline bg-card text-primary placeholder:text-muted/70 text-base shadow-sm transition-colors disabled:opacity-60"
+        />
+        <button
+          type="submit"
+          disabled={!canSubmit}
+          className="inline-flex items-center justify-center gap-2 w-full h-12 px-6 rounded-lg bg-accent text-white font-medium text-sm shadow-sm transition-colors hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isLoading ? (
+            <>
+              <Spinner /> Generating…
+            </>
+          ) : (
+            <>
+              Generate interview questions
+              <ArrowRight />
+            </>
+          )}
+        </button>
 
         {turnstileSiteKey ? (
-          <div className="mt-4 flex justify-center sm:justify-start">
+          <div className="flex justify-center">
             <Turnstile
               ref={turnstileRef}
               siteKey={turnstileSiteKey}
@@ -244,11 +247,15 @@ function LandingView({
           </div>
         ) : null}
 
-        <div role="alert" aria-live="polite" className="min-h-[1.25rem]">
-          {error ? (
-            <p className="mt-4 text-sm text-[color:var(--error)]">{error}</p>
-          ) : null}
-        </div>
+        {error ? (
+          <p
+            role="alert"
+            aria-live="polite"
+            className="text-sm text-[color:var(--error)] text-center"
+          >
+            {error}
+          </p>
+        ) : null}
       </form>
 
       {isLoading ? (
@@ -349,6 +356,25 @@ function Spinner() {
         stroke="currentColor"
         strokeWidth="3"
         strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function ArrowRight() {
+  return (
+    <svg
+      className="h-4 w-4"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden
+    >
+      <path
+        d="M5 12h14m0 0-6-6m6 6-6 6"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
