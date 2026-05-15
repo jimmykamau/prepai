@@ -1,13 +1,35 @@
+import { ConfigurationError } from "./errors";
+
 const VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
+const HAS_SECRET = Boolean(process.env.TURNSTILE_SECRET_KEY);
+const HAS_SITE_KEY = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
+
+const FATAL_MISMATCH =
+  HAS_SECRET && !HAS_SITE_KEY
+    ? "TURNSTILE_SECRET_KEY is set but NEXT_PUBLIC_TURNSTILE_SITE_KEY is missing — the client cannot produce a token. Set both or unset both."
+    : null;
+
+if (FATAL_MISMATCH) {
+  console.error("[turnstile] " + FATAL_MISMATCH);
+} else if (HAS_SITE_KEY && !HAS_SECRET) {
+  console.warn(
+    "[turnstile] NEXT_PUBLIC_TURNSTILE_SITE_KEY is set but TURNSTILE_SECRET_KEY is missing — server-side verification is being skipped.",
+  );
+}
+
 export function turnstileEnabled(): boolean {
-  return Boolean(process.env.TURNSTILE_SECRET_KEY);
+  return HAS_SECRET;
 }
 
 export async function verifyTurnstile(
   token: string | undefined,
   remoteIp?: string,
 ): Promise<{ ok: true } | { ok: false; reason: string }> {
+  if (FATAL_MISMATCH) {
+    throw new ConfigurationError(FATAL_MISMATCH);
+  }
+
   const secret = process.env.TURNSTILE_SECRET_KEY;
   if (!secret) {
     return { ok: true };

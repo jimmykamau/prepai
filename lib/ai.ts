@@ -2,6 +2,7 @@ import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateObject, type LanguageModel } from "ai";
 import { QuestionsSchema, type QuestionsPayload } from "./schema";
+import { ConfigurationError } from "./errors";
 
 type Provider = "openrouter" | "google";
 
@@ -25,14 +26,16 @@ function resolveProvider(): Provider {
   const raw = process.env.AI_PROVIDER?.trim().toLowerCase();
   if (raw === "google") return "google";
   if (raw === "openrouter" || !raw) return "openrouter";
-  throw new Error(`Unknown AI_PROVIDER "${raw}". Use "openrouter" or "google".`);
+  throw new ConfigurationError(
+    `Unknown AI_PROVIDER "${raw}". Use "openrouter" or "google".`,
+  );
 }
 
 function buildModel(provider: Provider): LanguageModel {
   if (provider === "google") {
     const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
     if (!apiKey) {
-      throw new Error(
+      throw new ConfigurationError(
         "GOOGLE_GENERATIVE_AI_API_KEY is not set (required when AI_PROVIDER=google)",
       );
     }
@@ -43,7 +46,7 @@ function buildModel(provider: Provider): LanguageModel {
 
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) {
-    throw new Error("OPENROUTER_API_KEY is not set");
+    throw new ConfigurationError("OPENROUTER_API_KEY is not set");
   }
   const openrouter = createOpenRouter({ apiKey });
   const modelId = process.env.OPENROUTER_MODEL?.trim() || DEFAULT_MODELS.openrouter;

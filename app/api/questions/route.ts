@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { JobTitleInput } from "@/lib/schema";
 import { generateInterviewQuestions } from "@/lib/ai";
 import { verifyTurnstile } from "@/lib/turnstile";
+import { ConfigurationError } from "@/lib/errors";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -33,18 +34,25 @@ export async function POST(request: NextRequest) {
     request.headers.get("x-real-ip") ||
     undefined;
 
-  const captcha = await verifyTurnstile(token, ip);
-  if (!captcha.ok) {
-    return NextResponse.json(
-      { error: "Captcha verification failed", code: captcha.reason },
-      { status: 403 },
-    );
-  }
-
   try {
+    const captcha = await verifyTurnstile(token, ip);
+    if (!captcha.ok) {
+      return NextResponse.json(
+        { error: "Captcha verification failed", code: captcha.reason },
+        { status: 403 },
+      );
+    }
+
     const payload = await generateInterviewQuestions(parsed.data);
     return NextResponse.json(payload, { status: 200 });
   } catch (err) {
+    if (err instanceof ConfigurationError) {
+      console.error("[/api/questions] configuration error:", err.message);
+      return NextResponse.json(
+        { error: "Server is misconfigured. Please contact the site owner." },
+        { status: 500 },
+      );
+    }
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("[/api/questions] generation failed:", message);
     return NextResponse.json(
